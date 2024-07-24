@@ -1,0 +1,37 @@
+* {
+    background-color: #111;
+    color: #eee;
+    border-color: #111;
+}
+html, p, h1, canvas, b, label {
+    background-color: #000;
+}
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #000;
+}
+canvas {
+    image-rendering: pixelated;
+    max-width: calc((100vw - 50px) / 3);
+    height: 40vh;
+    max-height: 20vw;
+}
+hr {
+    border: .5pt solid #111;
+}
+
+input[type='range'] {
+    overflow: hidden;
+    width: 20vw;
+    -webkit-appearance: none;
+    background-color: #aaa;
+  }
+  
+  input[type='range']::-webkit-slider-runnable-track {
+    color: #aaa;
+  }
+
+input[type="range"], input[type="range"]::-moz-range-track, input[type="range"]::-webkit-slider-runnable-track {
+    color: #aaa;
+    background: #aaa;
+}
