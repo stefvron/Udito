@@ -60,10 +60,10 @@ const algorithms = {
 function dl() {
     const data = previewImg.toDataURL("image/png");
     const newWin = window.open();
-    newWin.document.body.style.margin = "0";
     const wRh = Math.ceil(previewImg.width/previewImg.height * 100);
     newWin.document.write("<img src='" + data + "' style='width: 100%; max-width: " + wRh + "vh; height: auto; image-rendering: pixelated;'>");
     newWin.document.write("<a id='img' href='" + data + "' download='udito_image.png'></a>");
+    newWin.document.body.style.margin = "0";
     newWin.document.getElementById("img").click();
 }
 function dlGrid() {
@@ -102,10 +102,10 @@ function dlGrid() {
 
     const dData = can.toDataURL("image/png");
     const newWin = window.open();
-    newWin.document.body.style.margin = "0";
     const wRh = Math.ceil(previewImg.width/previewImg.height * 100);
     newWin.document.write("<img src='" + dData + "' style='width: 100%; max-width: " + wRh + "vh; height: auto; image-rendering: pixelated;'>");
     newWin.document.write("<a id='img' href='" + dData + "' download='udito_image_grid.png'></a>");
+    newWin.document.body.style.margin = "0";
     newWin.document.getElementById("img").click();
 }
 
