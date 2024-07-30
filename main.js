@@ -7,6 +7,8 @@ const satIn = document.getElementById("sat");
 const briIn = document.getElementById("bri");
 const contIn = document.getElementById("cont");
 const blurIn = document.getElementById("blur");
+const alp = document.getElementById("alp");
+const modAlp = document.getElementById("modAlp");
 
 const xpercIn = document.getElementById("xperc");
 const ypercIn = document.getElementById("yperc");
@@ -110,6 +112,11 @@ function dlGrid() {
 }
 
 function updatePreview(resized) {
+    if(modAlp.checked) {
+        alp.disabled = false;
+    } else {
+        alp.disabled = true;
+    }
     resized = resized || false;
     generatePreview(resized)
 }
@@ -150,6 +157,9 @@ function resetSliders() {
     errfacIn.value = 1;
     satIn.value = 1;
     briIn.value = 1;
+    alp.value = 0.33
+    alp.disabled = true;
+    modAlp.checked = false;
 }
 
 function uploadImage() {
@@ -221,6 +231,13 @@ function applySettings() {
             data[i] = newpixel[0]; // red
             data[i + 1] = newpixel[1]; // green
             data[i + 2] = newpixel[2]; // blue
+            if(modAlp.checked) {
+                if(data[i+3] <= alp.value * 255) {
+                    data[i+3] = 0;
+                } else {
+                    data[i+3] = 255;
+                }
+            }
         }
     }
 
