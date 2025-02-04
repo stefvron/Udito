@@ -38,8 +38,8 @@ const palettes = {
         const c = Math.round((x[0]+x[1]+x[2])/3);
         return [c,c,c]
     },
-    "8b": (x) => {
-        return [Math.floor(x[0]/64)*64,Math.floor(x[1]/64)*64,Math.floor(x[2]/64)*64]
+    "6b": (x) => {
+        return [Math.floor(x[0]/255*3+0.5)/3*255,Math.floor(x[1]/255*3+0.5)/3*255,Math.floor(x[2]/255*3+0.5)/3*255]
     },
     "3b": (x) => {
         return [Math.floor(x[0]/255 + 0.5)*255,Math.floor(x[1]/255 + 0.5)*255,Math.floor(x[2]/255 + 0.5)*255]
@@ -52,10 +52,17 @@ const palettes = {
     "p8ws": null,
     "upload": null
 }
+const palLengths = {
+    "bw": 255,
+    "6b": 1,
+    "3b": 1,
+    "1b": 1
+}
 const algorithms = {
     "nc": nearestColour,
     "fs": floydSteinberg,
-    "bm": bayerMatrix
+    "bm4": bayerMatrix4,
+    "bm8": bayerMatrix8,
 }
 
 // Logic
@@ -117,6 +124,7 @@ function updatePreview(resized) {
     } else {
         alp.disabled = true;
     }
+    errfacIn.disabled = algIn.value == "nc";
     resized = resized || false;
     generatePreview(resized)
 }
@@ -160,6 +168,7 @@ function resetSliders() {
     alp.value = 0.33
     alp.disabled = true;
     modAlp.checked = false;
+    errfacIn.disabled = algIn.value == "nc";
 }
 
 function uploadImage() {
@@ -329,6 +338,14 @@ function HSVtoRGB(hsv) {
     return [(rd+m)*255, (gd+m)*255, (bd+m)*255];
 }
 
+function getPaletteLength(palette) {
+    if(palette instanceof Array) {
+        return palette.length;
+    } else if(palette instanceof Function){
+        return palLengths[Object.entries(palettes).find(([k,v]) => v === palette)?.[0]] ?? 0;
+    }
+}
+
 function getNearestColourFromPalette(colour, palette) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -422,6 +439,53 @@ function floydSteinberg(pal) {
     ctx.putImageData(imageData, 0, 0);
 }
 
-function bayerMatrix(pal) {
+function bayerMatrix4(pal) {
+    let m = [
+        [0, 12, 3, 15], 
+        [8, 4, 11, 7], 
+        [2, 14, 1, 13], 
+        [10, 6, 9, 5]
+    ];
+    m = m.map(x => x.map(y => y/16));
+    bayerMatrix(pal,m);
+}
+function bayerMatrix8(pal) {
+    let m = [
+        [0, 48, 12, 60, 3, 51, 15, 63], 
+        [32, 16, 44, 28, 35, 19, 47, 31],
+        [8, 56, 4, 52, 11, 59, 7, 55],
+        [40, 24, 36, 20, 43, 27, 39, 23],
+        [2, 50, 14, 62, 1, 49, 13, 61], 
+        [34, 18, 46, 30, 33, 17, 45, 29],
+        [10, 58, 6, 54, 9, 57, 5, 53],
+        [42, 26, 38, 22, 41, 25, 37, 21]
+    ];
+    m = m.map(x => x.map(y => y/64));
+    bayerMatrix(pal,m);
+}
 
+function bayerMatrix(pal, matrix) {
+    console.log(pal)
+    console.log(getPaletteLength(pal))
+    let RATIO = 255/Math.log2((getPaletteLength(pal))/3)*errfacIn.value
+    console.log(RATIO)
+
+    const ctx = previewImg.getContext("2d");
+    const Sctx = sourceImg.getContext("2d");
+    const imageData = Sctx.getImageData(0, 0, previewImg.width, previewImg.height);
+    const data = imageData.data;
+    for(let y = 0; y < imageData.height; y++) {
+        for(let x = 0; x < imageData.width; x++) {
+            const i = y * (imageData.width * 4) + x * 4;
+            let oldpixel = [data[i],data[i+1],data[i+2]]
+            oldpixel = oldpixel.map(c => Math.min(255, c + RATIO*(matrix[x%matrix.length][y%matrix[0].length] - 0.5)));
+            newpixel = getNearestColourFromPaletteSync([...oldpixel], pal);
+
+            data[i] = newpixel[0]; // red
+            data[i + 1] = newpixel[1]; // green
+            data[i + 2] = newpixel[2]; // blue
+        }
+    }
+
+    ctx.putImageData(imageData, 0, 0);
 }
