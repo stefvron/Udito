@@ -1,6 +1,11 @@
+/* 
+ * The issue with JavaScript is that it's really hard to hide how shitty your code is. ;-;
+ */
+
 // Input elements
 const palIn = document.getElementById("pal");
 const algIn = document.getElementById("alg");
+const compIn = document.getElementById("comp");
 
 const errfacIn = document.getElementById("errfac");
 const satIn = document.getElementById("sat");
@@ -291,9 +296,64 @@ function rgbToLab(rgb) {
     
     return [l,a,b];
 }
+function labToLch(lab) {
+    let l = lab[0];
+    let c = Math.sqrt(Math.pow(lab[1], 2) + Math.pow(lab[2], 2))
+    let h = radToDeg(Math.atan2(lab[2], lab[1]));
+    return [l, c, h];
+}
 
-function deltaE(lab1, lab2) {
-    return Math.sqrt(Math.pow(lab2[0]-lab1[0],2)+Math.pow(lab2[1]-lab1[1],2)+Math.pow(lab2[2]-lab1[2],2))
+function radToDeg(x) {
+    return x * (180 / Math.PI);
+}
+
+function degToRad(x) {
+    return x * (Math.PI / 180);
+}
+
+function dist(c1, c2) {
+    return Math.sqrt(Math.pow(c2[0]-c1[0],2)+Math.pow(c2[1]-c1[1],2)+Math.pow(c2[2]-c1[2],2));
+}
+
+function deltaE(c1, c2) {
+    let lab1 = rgbToLab(c1);
+    let lab2 = rgbToLab(c2);
+    return dist(lab1, lab2);
+}
+
+function ciede2000(c1, c2) {
+    let lch1 = labToLch(rgbToLab(c1));
+    let lch2 = labToLch(rgbToLab(c2));
+
+    let kL = 1;
+    let kC = 1;
+    let kH = 1;
+
+    let deltaL = lch2[0] - lch1[0];
+    let deltaC = lch2[1] - lch1[1];
+    let deltah = lch2[2]-lch1[2];
+    if(lch1[1] == 0 || lch2[1] == 0) deltah = 0;
+    else if(Math.abs(lch1[2]-lch2[2]) > 180 && lch2[2] <= lch1[2]) deltah += 360 ;
+    else if(Math.abs(lch1[2]-lch2[2]) > 180 && lch2[2] > lch1[2]) deltah -= 360;
+    let deltaH = 2 * Math.sqrt(lch1[1]*lch2[1])*Math.sin(degToRad(deltah/2));
+
+    let L_ = (lch1[0]+lch2[0])/2;
+    let C_ = (lch1[1]+lch2[1])/2;
+    let H_ = 0;
+    if(lch1[1] == 0 || lch2[1] == 0) H_ = lch1[1] + lch2[1];
+    else if(Math.abs(lch1[2]-lch2[2]) <= 180) H_ = (lch1[2]+lch2[2])/2;
+    else if(Math.abs(lch1[2]-lch2[2]) > 180 && (lch1[2] + lch2[2]) < 360) H_ = (lch1[2]+lch2[2]+360)/2;
+    else if(Math.abs(lch1[2]-lch2[2]) > 180 && (lch1[2] + lch2[2]) >= 360) H_ = (lch1[2]+lch2[2]-360)/2;
+
+    let t = 1 - 0.17 * Math.cos(degToRad(H_-30)) + 0.25 * Math.cos(degToRad(2*H_)) + 0.32 * Math.cos(degToRad(3*H_+6)) - 0.2 * Math.cos(degToRad(4*H_-63));
+
+    let sL = 1 + (0.015*Math.pow(L_-50,2))/Math.sqrt(20+Math.pow(L_-50,2));
+    let sC = 1 + 0.045 * C_;
+    let sH = 1 + 0.015*C_*t;
+
+    let rT = -2 * Math.sqrt(Math.pow(C_,7)/(Math.pow(C_,7)+Math.pow(25,7)))*Math.sin(degToRad(60)*Math.exp(-1*Math.pow((H_-275)/25,2)));
+
+    return Math.sqrt(Math.pow(deltaL/(kL*sL),2)+Math.pow(deltaC/(kC*sC),2)+Math.pow(deltaH/(kH*sH),2)+rT*(deltaC/(kC*sC)*(deltaH/(kH*sH))));
 }
 
 function hexToRgb(str) { 
@@ -349,35 +409,20 @@ function getPaletteLength(palette) {
     }
 }
 
-function getNearestColourFromPalette(colour, palette) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const cAsLab = rgbToLab(colour);
-            var closest = hexToRgb(palette[0]);
-            var delta = deltaE(cAsLab,rgbToLab([...closest]));
-            var i = 1;
-            while(i < palette.length) {
-                const rgb = hexToRgb(palette[i]);
-                const deltaI = deltaE(cAsLab,rgbToLab([...rgb]));
-                if(deltaI < delta) {
-                    closest = rgb;
-                    delta = deltaI;
-                }
-                i++;
-            }
-            resolve(closest);
-        }, 0);
-    });
+function compareC(c1,c2) {
+    if(compIn.value=="cie76") return deltaE(c1, c2);
+    else if(compIn.value=="ciede2000") return ciede2000(c1, c2);
+    else return dist(c1, c2);
 }
+
 function getNearestColourFromPaletteSync(colour, palette) {
     if(palette instanceof Array) {
-        const cAsLab = rgbToLab(colour);
         var closest = hexToRgb(palette[0]);
-        var delta = deltaE(cAsLab,rgbToLab([...closest]));
+        var delta = compareC([...colour], [...closest]);
         var i = 1;
         while(i < palette.length) {
             const rgb = hexToRgb(palette[i]);
-            const deltaI = deltaE(cAsLab,rgbToLab([...rgb]));
+            let deltaI = compareC([...colour], [...rgb]);
             if(deltaI < delta) {
                 closest = rgb;
                 delta = deltaI;

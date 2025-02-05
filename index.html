@@ -60,6 +60,13 @@
                 </optgroup>
             </select>
 
+            <label for="comp">Colour comparison: </label>
+            <select id="comp" name="comp" onchange="updatePreview()">
+                <option value="ciede2000" selected>CIEDE2000 (adjusted ΔE*)</option>
+                <option value="cie76">CIE76 (ΔE* with LAB)</option>
+                <option value="eucl">Euclidean (within sRGB)</option>
+            </select>
+
             <hr>
 
             <label for="errfac">Error factor</label>
