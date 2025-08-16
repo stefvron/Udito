@@ -1,5 +1,5 @@
 {
-    "palletes": [
+    "palettes": [
         {
             "group": "Popular colour palettes",
             "palettes": [
@@ -9,7 +9,7 @@
                     "colours": [
                         "000000","1D2B53","7E2553","008751","AB5236","5F574F",
                         "C2C3C7","FFF1E8","FF004D","FFA300","FFEC27","00E436",
-                        "29ADFF","83769C","FF77A8","FFCCAA",
+                        "29ADFF","83769C","FF77A8","FFCCAA"
                     ]
                 },
                 {
@@ -21,7 +21,7 @@
                         "00E436","FFCCAA","FFEC27","FFF1E8","291814","111D35",
                         "422136","49333B","742F29","125359","754665","065AB5",
                         "BE1250","A28879","FF6C24","FF6E59","00B543","FF9D81",
-                        "A8E72E","F3EF7D",
+                        "A8E72E","F3EF7D"
                     ]
                 },
                 {
@@ -33,7 +33,7 @@
                         "13E67B","87FF5E","0C816E","10AEA6","13E1BE","28509E",
                         "4093E4","60F7F2","6B50F6","99B1FB","780C99","AA38B9",
                         "E09FF9","CB007A","EC1F80","F38DA9","684634","95682A",
-                        "F8B277",
+                        "F8B277"
                     ]
                 },
                 {
@@ -50,11 +50,11 @@
                         "CB007A","EC1F80","F38DA9","9B5249","D18078","FAB6A4",
                         "684634","95682A","DBA463","7B6352","9C846B","D6B594",
                         "D18051","F8B277","FFC5A5","6D643F","948C6B","CDC59E",
-                        "333941","6D758D","B3B9D1",
+                        "333941","6D758D","B3B9D1"
                     ]
-                },
+                }
             ]
-        },
+        }
     ],
     "colouring_algorithms": [
         {
@@ -65,7 +65,7 @@
                     "id": "nearest",
                     "type": "shader",
                     "shader_name": "nearest.glsl"
-                },
+                }
             ]
         },
         {
@@ -93,7 +93,7 @@
                             [0, 12, 3, 15],
                             [8, 4, 11, 7],
                             [2, 14, 1, 13],
-                            [10, 6, 9, 5],
+                            [10, 6, 9, 5]
                         ],
                         "divisor": 16
                     }
@@ -112,30 +112,30 @@
                             [2, 50, 10, 58, 13, 61, 29, 45],
                             [34, 18, 42, 26, 6, 54, 38, 22],
                             [16, 64, 48, 32, 44, 28, 60, 12],
-                            [52, 36, 20, 4, 56, 40, 24],
+                            [52, 36, 20, 4, 56, 40, 24]
                         ],
                         "divisor": 64
                     }
-                },
+                }
             ]
-        },
+        }
     ],
     "colour_comparison": [
         {
             "name": "CIEDE2000 (adjusted ΔE*)",
             "id": "0",
-            "function_name": "ciede2000",
+            "function_name": "ciede2000"
         },
         {
             "name": "CIE76 (ΔE* with LAB)",
             "id": "1",
-            "function_name": "cie76",
+            "function_name": "cie76"
         },
         {
             "name": "Euclidian (within sRGB)",
             "id": "2",
-            "function_name": "euclidian",
-        },
+            "function_name": "euclidian"
+        }
     ],
     "intermediate_shders": [
         {
@@ -160,8 +160,8 @@
                     "min": 0.0,
                     "max": 3.0,
                     "step": 0.05
-                },
+                }
             ]
-        },
+        }
     ]
 }
