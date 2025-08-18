@@ -63,8 +63,9 @@
                 {
                     "name": "Nearest Colour",
                     "id": "nearest",
+                    "has_error": false,
                     "type": "shader",
-                    "shader_name": "nearest.glsl"
+                    "shader_name": "dithering/nearest.glsl"
                 }
             ]
         },
@@ -74,20 +75,23 @@
                 {
                     "name": "Floyd-Steinberg",
                     "id": "floyd-steinberg",
+                    "has_error": true,
                     "type": "function",
                     "function_name": "floydSteinberg"
                 },
                 {
                     "name": "Atkinson",
                     "id": "atkinson",
+                    "has_error": true,
                     "type": "function",
                     "function_name": "atkinson"
                 },
                 {
                     "name": "4x4 Bayer-Matrix",
                     "id": "bm4",
+                    "has_error": true,
                     "type": "shader",
-                    "shader_name": "bayer_matrix.glsl",
+                    "shader_name": "dithering/bayer_matrix.glsl",
                     "shader_uniforms": {
                         "matrix": [
                             [0, 12, 3, 15],
@@ -101,8 +105,9 @@
                 {
                     "name": "8x8 Bayer-Matrix",
                     "id": "bm8",
+                    "has_error": true,
                     "type": "shader",
-                    "shader_name": "bayer_matrix.glsl",
+                    "shader_name": "dithering/bayer_matrix.glsl",
                     "shader_uniforms": {
                         "matrix": [
                             [0, 48, 12, 60, 3, 51, 15, 63],
@@ -123,25 +128,28 @@
     "colour_comparison": [
         {
             "name": "CIEDE2000 (adjusted ΔE*)",
-            "id": "0",
-            "function_name": "ciede2000"
+            "id": "ciede2000",
+            "js_file": "module/colour/ciede2000.js",
+            "shader_name": "module/colour/ciede2000.glsl"
         },
         {
             "name": "CIE76 (ΔE* with LAB)",
-            "id": "1",
-            "function_name": "cie76"
+            "id": "cie76",
+            "js_file": "module/colour/cie76.js",
+            "shader_name": "module/colour/cie76.glsl"
         },
         {
             "name": "Euclidian (within sRGB)",
-            "id": "2",
-            "function_name": "euclidian"
+            "id": "euclidian",
+            "js_file": "module/colour/euclidian.js",
+            "shader_name": "module/colour/euclidian.glsl"
         }
     ],
-    "intermediate_shders": [
+    "intermediate_shaders": [
         {
             "name": "Basic image processing",
             "id": "basic",
-            "shader_name": "basic_processing.glsl",
+            "shader_name": "intermediate/basic_processing.glsl",
             "shader_arguments": [
                 {
                     "name": "Saturation",
@@ -149,8 +157,7 @@
                     "type": "float",
                     "default": 1.0,
                     "min": 0.0,
-                    "max": 3.0,
-                    "step": 0.05
+                    "max": 3.0
                 },
                 {
                     "name": "Brightness",
@@ -158,8 +165,31 @@
                     "type": "float",
                     "default": 1.0,
                     "min": 0.0,
-                    "max": 3.0,
-                    "step": 0.05
+                    "max": 3.0
+                },
+                {
+                    "name": "Contrast",
+                    "id": "contrast",
+                    "type": "float",
+                    "default": 1.0,
+                    "min": 0.0,
+                    "max": 3.0
+                },
+                {
+                    "name": "Box Blur",
+                    "id": "bblur",
+                    "type": "float",
+                    "default": 0.0,
+                    "min": 0.0,
+                    "max": 32.0
+                },
+                {
+                    "name": "Alpha Threshold (negative=no threshold)",
+                    "id": "alpha",
+                    "type": "int",
+                    "default": -1,
+                    "min": -1,
+                    "max": 255
                 }
             ]
         }
