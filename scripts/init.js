@@ -68,7 +68,9 @@ function addImageUpload(main) {
                 originalImageSize.height = img.height;
                 const width_in = document.getElementById(constants.ids.width_px);
                 width_in.value = img.width;
-                width_in.dispatchEvent(new Event('change'));
+                const height_in = document.getElementById(constants.ids.height_px);
+                height_in.value = img.height;
+                height_in.dispatchEvent(new Event('change'));
             }
             img.src = e.target.result;
         }
@@ -106,7 +108,7 @@ function addShaderArgument(main, arg, shader) {
     const name = arg.name;
     const id = shader_attribute_id(shader, arg.id);
     const type = arg.type;
-    const changeHandler = renderImage;
+    const changeHandler = () => renderImage(true);
 
     let elements;
     if (type === "float" || type === "int") {
@@ -169,7 +171,7 @@ function addColourPalettes(main) {
     const id = constants.ids.palettes;
     const path = "palettes";
     const baseObj = config.palettes;
-    const onchange = renderFinalImage;
+    const onchange = () => renderFinalImage(true);
     const elements = generateSelection(name, id, path, baseObj, onchange);
     elements.forEach(el => main.appendChild(el));
 }
@@ -180,7 +182,7 @@ function addColouringAlgorithms(main) {
     const baseObj = config.colouring_algorithms;
     const onchange = () => {
         setErrorFactorSlider();
-        renderFinalImage();
+        renderFinalImage(true);
     };
     const elements = generateSelection(name, id, path, baseObj, onchange);
     elements.forEach(el => main.appendChild(el));
@@ -190,7 +192,7 @@ function addColourComparison(main) {
     const id = constants.ids.colour_comparison;
     const path = "";
     const baseObj = config.colour_comparison;
-    const onchange = renderFinalImage;
+    const onchange = () => renderFinalImage(true);
     const elements = generateSelection(name, id, path, baseObj, onchange);
     elements.forEach(el => main.appendChild(el));
 }
@@ -323,7 +325,7 @@ function addResizing(main) {
             }
         }
 
-        renderImage();
+        renderImage(true);
     }
     let elements = generateSlider(name, id, min, max, step, val, changeHandler);
     name = "Width (px)";
@@ -421,14 +423,14 @@ function addPreview(main) {
         const renderButton = document.getElementById(constants.ids.render_button);
         if(live) {
             renderButton.disabled = true;
-            renderImage();
+            renderImage(true);
         }
         else renderButton.disabled = false;
     };
     elements = elements.concat(generateCheckbox(name, id, checked, changeHandler));
     name = "Render Preview";
     id = constants.ids.render_button;
-    let clickHandler = renderImage;
+    let clickHandler = () => renderImage(false);
     elements = elements.concat(generateButton(name, id, clickHandler));
     elements.push(document.createElement('br'));
 
@@ -455,16 +457,16 @@ function generatePreviewCanvas(name, id) {
 
     return outElements;
 }
-function renderImage() {
+function renderImage(checkLive) {
     const livePreview = document.getElementById(constants.ids.live_preview);
-    if(!livePreview || !livePreview.checked) return;
+    if(checkLive && (!livePreview || !livePreview.checked)) return;
     renderer.postMessage({
         action: 'renderImage'
     });
 }
-function renderFinalImage() {
+function renderFinalImage(checkLive) {
     const livePreview = document.getElementById(constants.ids.live_preview);
-    if(!livePreview || !livePreview.checked) return;
+    if(checkLive && (!livePreview || !livePreview.checked)) return;
     renderer.postMessage({
         action: 'renderFinalImage'
     });

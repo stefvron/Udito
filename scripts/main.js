@@ -8,7 +8,14 @@ if (!success) {
     console.error('Failed to initialise the interface.');
 }
 
+let canvasSizes = []
+let parallelMessages = 0;
 renderer.onmessage = function(event) {
+    while(parallelMessages > 0) {
+
+    }
+    parallelMessages++;
+
     const { data } = event;
     if (!data) return;
     if (!data.action) return;
@@ -16,15 +23,15 @@ renderer.onmessage = function(event) {
     switch (data.action) {
         case 'setCanvasImage':
             if(!data.canvas || !data.bitmap) return;
-            document.getElementById(data.canvas)
-                .getContext('2d')
-                .putImageData(data.bitmap, 0, 0);
+            drawImageToCanvas(data.bitmap, data.canvas);
             break;
         case 'setCanvasSize':
             if(!data.canvas || !data.width || !data.height) return;
             const canvas = document.getElementById(data.canvas);
-            canvas.width = data.width;
-            canvas.height = data.height;
+            canvasSizes[canvas] = {
+                width: data.width,
+                height: data.height
+            };
             break;
         case 'getPreferences':
             renderer.postMessage({
@@ -35,6 +42,8 @@ renderer.onmessage = function(event) {
         default:
             console.error('Unknown action:', data.action);
     }
+
+    parallelMessages--;
 }
 
 export function getPreferences() {
@@ -73,4 +82,20 @@ export function getPreferences() {
         intermediateShaders: intermediateShaders,
     };
     return preferences;
+}
+function drawImageToCanvas(bitmap, canvas) {
+    canvas = document.getElementById(canvas)
+    requestAnimationFrame(() => {
+        updateCanvasSize(canvas);
+        canvas
+            .getContext('2d')
+            .putImageData(bitmap, 0, 0);
+    });
+}
+function updateCanvasSize(canvas) {
+    if(canvas in canvasSizes) {
+        const dim = canvasSizes[canvas];
+        canvas.width = dim.width;
+        canvas.height = dim.height;
+    }
 }
