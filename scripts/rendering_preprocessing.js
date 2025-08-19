@@ -1,5 +1,5 @@
 import { constants, config } from './constants.js';
-import { compileShader, linkProgram, shader_attribute_id } from './utils.js';
+import { compileShader, linkProgram, shader_attribute_id, runShaderProgram } from './utils.js';
 
 export async function preprocessRendering(canvas, preferences) {
     let render = new OffscreenCanvas(canvas.width, canvas.height);
@@ -14,8 +14,7 @@ export async function preprocessRendering(canvas, preferences) {
     await Promise.all(
         preferences.intermediateShaders.map(async shader => 
             applyShader(canvas, render, gl, shader)
-        )
-    );
+        ));
 }
 
 async function applyShader(canvas, renderCanvas, gl, shader) {
@@ -72,44 +71,6 @@ async function applyShader(canvas, renderCanvas, gl, shader) {
             console.warn(`Uniform location for ${id} not found.`);
         }
     });
-    const posBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, fullScreenQuad, gl.STATIC_DRAW);
 
-    const posLoc = gl.getAttribLocation(program, 'aPosition');
-    if (posLoc === -1) {
-        console.error('Attribute location for aPosition not found.');
-        return;
-    }
-
-    const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(
-        gl.TEXTURE_2D, 0, gl.RGBA, canvas.width, canvas.height, 0,
-        gl.RGBA, gl.UNSIGNED_BYTE, canvas
-    );
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.uniform1i(gl.getUniformLocation(program, 'inputTexture'), 0);
-
-    gl.enableVertexAttribArray(posLoc);
-    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-    canvas.getContext('2d').drawImage(renderCanvas, 0, 0);
+    await runShaderProgram(canvas, renderCanvas, gl, program);
 }
-
-const fullScreenQuad = new Float32Array([
-    -1.0, -1.0,
-    1.0, -1.0,
-    -1.0,  1.0,
-    -1.0,  1.0,
-    1.0, -1.0,
-    1.0,  1.0
-]);

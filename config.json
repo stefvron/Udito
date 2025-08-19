@@ -61,7 +61,7 @@
             "group": "No dithering",
             "algorithms": [
                 {
-                    "name": "Nearest Colour",
+                    "name": "Nearest Colour (fast)",
                     "id": "nearest",
                     "has_error": false,
                     "type": "shader",
@@ -73,54 +73,70 @@
             "group": "Dithering",
             "algorithms": [
                 {
-                    "name": "Floyd-Steinberg",
+                    "name": "Floyd-Steinberg (slow)",
                     "id": "floyd-steinberg",
                     "has_error": true,
                     "type": "function",
                     "function_name": "floydSteinberg"
                 },
                 {
-                    "name": "Atkinson",
+                    "name": "Atkinson (slow)",
                     "id": "atkinson",
                     "has_error": true,
                     "type": "function",
                     "function_name": "atkinson"
                 },
                 {
-                    "name": "4x4 Bayer-Matrix",
+                    "name": "4x4 Bayer-Matrix (fast)",
                     "id": "bm4",
                     "has_error": true,
                     "type": "shader",
                     "shader_name": "dithering/bayer_matrix.glsl",
-                    "shader_uniforms": {
-                        "matrix": [
-                            [0, 12, 3, 15],
-                            [8, 4, 11, 7],
-                            [2, 14, 1, 13],
-                            [10, 6, 9, 5]
-                        ],
-                        "divisor": 16
-                    }
+                    "shader_uniforms": [
+                        {
+                            "name": "matrix",
+                            "type": "texture2d",
+                            "value": [
+                                0, 12, 3, 15,
+                                8, 4, 11, 7,
+                                2, 14, 1, 13,
+                                10, 6, 9, 5
+                            ]
+                        },
+                        {
+                            "name": "divisor",
+                            "type": "int",
+                            "value": 16
+                        }
+                    ]
                 },
                 {
-                    "name": "8x8 Bayer-Matrix",
+                    "name": "8x8 Bayer-Matrix (fast)",
                     "id": "bm8",
                     "has_error": true,
                     "type": "shader",
                     "shader_name": "dithering/bayer_matrix.glsl",
-                    "shader_uniforms": {
-                        "matrix": [
-                            [0, 48, 12, 60, 3, 51, 15, 63],
-                            [32, 16, 44, 28, 11, 35, 7, 55],
-                            [8, 56, 4, 52, 14, 62, 1, 49],
-                            [40, 24, 36, 20, 9, 33, 5, 53],
-                            [2, 50, 10, 58, 13, 61, 29, 45],
-                            [34, 18, 42, 26, 6, 54, 38, 22],
-                            [16, 64, 48, 32, 44, 28, 60, 12],
-                            [52, 36, 20, 4, 56, 40, 24]
-                        ],
-                        "divisor": 64
-                    }
+                    "shader_uniforms": [
+                        {
+                            "name": "matrix",
+                            "type": "texture2d",
+                            "value": [
+                                0, 48, 12, 60, 3, 51, 15, 63,
+                                32, 16, 44, 28, 11, 35, 7, 55,
+                                8, 56, 4, 52, 14, 62, 1, 49,
+                                40, 24, 36, 20, 9, 33, 5, 53,
+                                2, 50, 10, 58, 13, 61, 29, 45,
+                                34, 18, 42, 26, 6, 54, 38, 22,
+                                16, 64, 48, 32, 44, 28, 60, 12,
+                                52, 36, 20, 4, 56, 40, 24
+                            ]
+                        },
+                        {
+                            "name": "divisor",
+                            "type": "int",
+                            "value": 64
+                        }
+                    ]
                 }
             ]
         }

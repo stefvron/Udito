@@ -28,6 +28,9 @@ onmessage = async function(event) {
         case 'renderImage':
             renderImage();
             break;
+        case 'renderFinalImage':
+            renderFinalImage();
+            break;
         default:
     }
 }
@@ -39,7 +42,6 @@ async function renderImage() {
     const height = preferences.renderHeight ?? originalCanvas.height;
     setProcessedCanvasSize(width, height);
 
-    const originalCtx = originalCanvas.getContext('2d');
     let renderCtx = renderCanvas.getContext('2d');
 
     renderCtx.clearRect(0, 0, width, height);
@@ -52,12 +54,15 @@ async function renderImage() {
         bitmap: renderCtx.getImageData(0, 0, width, height)
     });
 
-    pixelArtRendering(renderCanvas, preferences);
+    await pixelArtRendering(renderCanvas, preferences);
     postMessage({
         action: 'setCanvasImage',
         canvas: constants.ids.rendered_canvas,
         bitmap: renderCtx.getImageData(0, 0, width, height)
     });
+}
+async function renderFinalImage() {
+    await renderImage(); // TODO: Optimise to not run preprocessing with same values
 }
 
 async function getPreferences() {
