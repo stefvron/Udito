@@ -178,10 +178,10 @@
                 {
                     "name": "Box Blur",
                     "id": "bblur",
-                    "type": "float",
-                    "default": 0.0,
-                    "min": 0.0,
-                    "max": 32.0
+                    "type": "int",
+                    "default": 0,
+                    "min": 0,
+                    "max": 32
                 },
                 {
                     "name": "Alpha Threshold (negative=no threshold)",
