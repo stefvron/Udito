@@ -309,9 +309,10 @@ function addResizing(main) {
             widthPercentage.value = Math.round(percentage);
             widthPercentage.dispatchEvent(new Event('input'));
             if(keepAspectRatio.checked) {
-                heightPixels.value = widthPixels.value;
-                heightPercentage.value = widthPercentage.value;
+                heightPercentage.value = percentage;
                 heightPercentage.dispatchEvent(new Event('input'));
+                const height = originalImageSize.height * (percentage / 100.0);
+                heightPixels.value = Math.round(height);
             }
         } else if(target.id === constants.ids.height_px) {
             const height = Math.round(parseFloat(target.value));
