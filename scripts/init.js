@@ -22,7 +22,7 @@ export async function init() {
         return false;
     }
 
-    renderer = new Worker('/scripts/rendering.js', { type: 'module' });
+    renderer = new Worker('../scripts/rendering.js', { type: 'module' });
 
     // Initialise the interface
     let success =
