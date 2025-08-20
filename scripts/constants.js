@@ -38,7 +38,7 @@ export const constants = {
 };
 
 // Load the configuration file
-const reqConf = await fetch('../config.json');
+const reqConf = await fetch('https://raw.githubusercontent.com/stefvron/Udito/refs/heads/main/config.json');
 if(!reqConf.ok) {
     console.error('Failed to load configuration:', reqConf.statusText);
 }

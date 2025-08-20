@@ -1,5 +1,4 @@
 import { constants, config } from './constants.js';
-import './utils.js';
 import { shader_attribute_id } from './utils.js';
 import { downloadResult, downloadGrid } from './download.js';
 /**
@@ -22,7 +21,7 @@ export async function init() {
         return false;
     }
 
-    renderer = new Worker('../scripts/rendering.js', { type: 'module' });
+    renderer = new Worker(window.location.pathname + 'scripts/rendering.js', { type: 'module' });
 
     // Initialise the interface
     let success =
