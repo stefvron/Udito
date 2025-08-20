@@ -19,7 +19,7 @@ export async function pixelArtRendering(canvas, preferences) {
             errFac: errFac
         });
     } else {
-        applyFunction(
+        await applyFunction(
             canvas, {
             palette: palette,
             algorithm: algorithm,
@@ -59,6 +59,7 @@ async function applyShader(canvas, args) {
         compPath
     );
     if (compiledShader) shaders.push(compiledShader);
+    else console.error('Failed to compile fragment shader.');
 
     const program = linkProgram(gl, shaders);
     if (!program) {
@@ -80,14 +81,17 @@ async function applyShader(canvas, args) {
                     break;
                 case 'texture2d':
                     const texture = gl.createTexture();
+                    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+                    gl.activeTexture(gl.TEXTURE2);
                     gl.bindTexture(gl.TEXTURE_2D, texture);
-                    const size = Math.sqrt(value.length());
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.Luminance, size, size, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, value);
+                    const size = Math.sqrt(value.length);
+                    const matrix = new Uint8Array(value);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, size, size, 0, gl.RED, gl.UNSIGNED_BYTE, matrix);
 
                     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
                     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
 
                     gl.activeTexture(gl.TEXTURE2);
                     gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -114,8 +118,27 @@ async function applyShader(canvas, args) {
 
     await runShaderProgram(canvas, renderCanvas, gl, program);
 }
-function applyFunction(canvas, args) {
-
+async function applyFunction(canvas, args) {
+    const module = await import('/scripts/dithering.js');
+    const func = module[args.algorithm.function_name];
+    if (!func) {
+        console.error(`Function ${args.algorithm.function_name} not found.`);
+        return;
+    }
+    const nearestColour = async (c) => {
+        const comparison = await import('/scripts/' + args.comparison.js_file);
+        let smallestCol = null;
+        let smallestDist = 0;
+        args.palette.colours.map(col => {
+            const comp = comparison.default([...c], hexToRgb(col));
+            if (smallestCol === null || comp < smallestDist) {
+                smallestCol = hexToRgb(col);
+                smallestDist = comp;
+            }
+        });
+        return smallestCol;
+    }
+    await func(canvas, nearestColour, args.errFac);
 }
 
 function passPalette(gl, program, palette) {
@@ -154,4 +177,15 @@ function arrayFromPalette(palette) {
         index++;
     });
     return arr;
+}
+function hexToRgb(hex) {
+    let result = [
+        parseInt(hex.slice(0, 2), 16),
+        parseInt(hex.slice(2, 4), 16),
+        parseInt(hex.slice(4, 6), 16)
+    ];
+    if (hex.length === 8) {
+        result.push(parseInt(hex.slice(6, 8), 16)); // Add alpha if present
+    }
+    return result;
 }

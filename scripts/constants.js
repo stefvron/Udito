@@ -27,7 +27,9 @@ export const constants = {
         "render_button": "render_btn",
         "original_canvas": "original_image",
         "processed_canvas": "processed_image",
-        "rendered_canvas": "rendered_image"
+        "rendered_canvas": "rendered_image",
+        "download_button": "download_btn",
+        "download_grid_button": "download_grid_btn",
     },
     "shaders": {
         "vertex_shader": "vertexShader.glsl",

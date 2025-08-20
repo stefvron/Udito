@@ -1,6 +1,7 @@
 import { constants, config } from './constants.js';
 import './utils.js';
 import { shader_attribute_id } from './utils.js';
+import { downloadResult, downloadGrid } from './download.js';
 /**
  * Config data
  */ 
@@ -33,7 +34,9 @@ export async function init() {
         insertDivider(main) &&
         addResizing(main) &&
         insertDivider(main) &&
-        addPreview(main);
+        addPreview(main) &&
+        insertDivider(main) &&
+        addDownloadSection(main);
 
     return success;
 }
@@ -471,3 +474,22 @@ function renderFinalImage(checkLive) {
         action: 'renderFinalImage'
     });
 }
+function addDownloadSection(main) {
+    let name = "Download Result";
+    let id = constants.ids.download_button;
+    let clickHandler = () => {
+        downloadResult();
+    };
+    let elements = [];
+    elements = elements.concat(generateButton(name, id, clickHandler));
+    name = "Download Grid";
+    id = constants.ids.download_grid_button;
+    clickHandler = () => {
+        downloadGrid();
+    };
+    elements = elements.concat(generateButton(name, id, clickHandler));
+    elements.forEach(el => main.appendChild(el));
+
+    return true;
+}
+
