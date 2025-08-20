@@ -33,7 +33,7 @@ export const constants = {
     },
     "shaders": {
         "vertex_shader": "vertexShader.glsl",
-        "directory": "/shaders/",
+        "directory": "https://raw.githubusercontent.com/stefvron/Udito/refs/heads/main/shaders/",
     }
 };
 
