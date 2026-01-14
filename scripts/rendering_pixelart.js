@@ -119,14 +119,14 @@ async function applyShader(canvas, args) {
     await runShaderProgram(canvas, renderCanvas, gl, program);
 }
 async function applyFunction(canvas, args) {
-    const module = await import('/scripts/dithering.js');
+    const module = await import('./dithering.js');
     const func = module[args.algorithm.function_name];
     if (!func) {
         console.error(`Function ${args.algorithm.function_name} not found.`);
         return;
     }
     const nearestColour = async (c) => {
-        const comparison = await import('/scripts/' + args.comparison.js_file);
+        const comparison = await import('./' + args.comparison.js_file);
         let smallestCol = null;
         let smallestDist = 0;
         args.palette.colours.map(col => {
