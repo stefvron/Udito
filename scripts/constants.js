@@ -30,10 +30,14 @@ export const constants = {
         "rendered_canvas": "rendered_image",
         "download_button": "download_btn",
         "download_grid_button": "download_grid_btn",
+        "lut_canvas": "lut_image",
     },
     "shaders": {
         "vertex_shader": "vertexShader.glsl",
         "directory": "https://raw.githubusercontent.com/stefvron/Udito/refs/heads/main/shaders/",
+    },
+    "lut": {
+        "depth": 256,
     }
 };
 

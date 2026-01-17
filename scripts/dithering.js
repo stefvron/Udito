@@ -6,7 +6,7 @@ export async function floydSteinberg(canvas, colourComparison, errFac) {
         for(let x = 0; x < imageData.width; x++) {
             const i = y * (imageData.width * 4) + x * 4;
             const oldpixel = [data[i],data[i+1],data[i+2]]
-            let newpixel = await colourComparison([...oldpixel]);
+            let newpixel = colourComparison([...oldpixel]);
 
             data[i] = newpixel[0]; // red
             data[i + 1] = newpixel[1]; // green
@@ -36,7 +36,7 @@ export async function atkinson(canvas, colourComparison, errFac) {
         for(let x = 0; x < imageData.width; x++) {
             const i = y * (imageData.width * 4) + x * 4;
             const oldpixel = [data[i],data[i+1],data[i+2]]
-            let newpixel = await colourComparison([...oldpixel]);
+            let newpixel = colourComparison([...oldpixel]);
 
             data[i] = newpixel[0]; // red
             data[i + 1] = newpixel[1]; // green
