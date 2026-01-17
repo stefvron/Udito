@@ -24,9 +24,9 @@ vec3 srgbTolab(vec4 colour) {
     float y = colour.r * 0.2126729 + colour.g * 0.7151522 + colour.b * 0.0721750;
     float z = colour.r * 0.0193339 + colour.g * 0.1191920 + colour.b * 0.9503041;
 
-    float l = 116.0 * formula(y / 0.9504) - 16.0;
-    float a = 500.0 * (formula(x / 1.0) - formula(y / 0.9504));
-    float b = 200.0 * (formula(y / 0.9504) - formula(z / 1.0888));
+    float l = 116.0 * formula(y / 1.0) - 16.0;
+    float a = 500.0 * (formula(x / 0.95047) - formula(y / 1.0));
+    float b = 200.0 * (formula(y / 1.0) - formula(z / 1.08883));
 
     return vec3(l, a, b);
 }

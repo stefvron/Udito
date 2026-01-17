@@ -20,8 +20,8 @@ export function rgbToLab(rgb) {
     }
 
     const l = 116 * formula(y/1) - 16;
-    const a = 500 * (formula(x/0.9504) - formula(y/1));
-    const b = 200 * (formula(y/1) - formula(z/1.0888));
+    const a = 500 * (formula(x/0.95047) - formula(y/1));
+    const b = 200 * (formula(y/1) - formula(z/1.08883));
     
     return [l,a,b];
 }
