@@ -25,6 +25,12 @@ export default class {
         if(uiContainer) {
             this.uiElement = document.createElement('div');
             this.uiElement.className = 'test-item';
+            
+            const id = this.generateID();
+            if(document.getElementById(id) !== null) {
+                throw new Error(`Test with name ${name} already exists.`);
+            }
+            this.uiElement.id = id;
             uiContainer.appendChild(this.uiElement);
             this.updateUI();
         }
@@ -84,16 +90,19 @@ export default class {
         this.uiElement.appendChild(description);
         const runButton = document.createElement('input');
         runButton.type = 'button';
+        runButton.className = 'test-run-button';
         runButton.value = 'Run Test';
         runButton.onclick = () => this.run();
         this.uiElement.appendChild(runButton);
         const resetButton = document.createElement('input');
         resetButton.type = 'button';
+        resetButton.className = 'test-reset-button';
         resetButton.value = 'Reset Test';
         resetButton.onclick = () => this.reset();
         this.uiElement.appendChild(resetButton);
         const status = document.createElement('p');
         status.className = 'test-status';
+        status.onclick = () => toggleResultsVisibility(this.uiElement.id);
         const passedCount = this.passed.filter(p => p === true).length;
         if(this.passed.length === 0) {
             status.textContent = 'Not Run';
@@ -122,5 +131,19 @@ export default class {
         this.uiElement.appendChild(resultList);
     }
 
+    generateID() {
+        return `test-${this.name.replace(/\s+/g, '-').toLowerCase()}`;
+    }
 }
 
+function toggleResultsVisibility(id) {
+    const testElement = document.getElementById(id);
+    if(!testElement) return;
+    const status = testElement.getElementsByClassName('test-status')[0];
+    if(!status) return;
+    if(status.classList.contains('expanded')) {
+        status.classList.remove('expanded');
+    } else {
+        status.classList.add('expanded');
+    }
+}

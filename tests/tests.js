@@ -32,12 +32,14 @@ function setupMenu() {
 
     const runAllButton = document.createElement('input');
     runAllButton.type = 'button';
+    runAllButton.id = 'run-all-tests-button';
     runAllButton.value = 'Run All Tests';
     runAllButton.onclick = runAllTests;
     menu.appendChild(runAllButton);
 
     const resetButton = document.createElement('input');
     resetButton.type = 'button';
+    resetButton.id = 'reset-tests-button';
     resetButton.value = 'Reset Tests';
     resetButton.onclick = resetTests;
     menu.appendChild(resetButton);
