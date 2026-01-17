@@ -1,0 +1,43 @@
+div {
+    background: none;
+}
+.test-results {
+    display: none;
+}
+.test-status.expanded ~ .test-results {
+    display: block;
+}
+.test-status {
+    background-color: #aaaaff11;
+    padding: 10px;
+    cursor: pointer;
+}
+.test-status:before {
+    content: "▶ Status: ";
+    color: #ccc;
+    margin-right: 5px;
+    display: inline-block;
+}
+.test-status.expanded:before {
+    content: "▼ Status: ";
+}
+
+.test-item {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    border-bottom: 1px solid #aaaaff44;
+}
+
+.test-run-button, #run-all-tests-button {
+    background-color: #2222ff77;
+}
+.test-run-button:hover, #run-all-tests-button:hover {
+    background-color: #2222ffaa !important;
+}
+
+.test-reset-button, #reset-tests-button {
+    background-color: #ff222277;
+}
+.test-reset-button:hover, #reset-tests-button:hover {
+    background-color: #ff2222aa !important;
+}
