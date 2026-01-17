@@ -13,8 +13,8 @@ Udito is just a small hobby project. The name means Untitled Dithering Tool and 
 ### Non-dithering
 - Nearest colour
 ### Dithering
-- Floyd-Steinberg (Synchronous JavaScript) [Broken: #8]
-- Atkinson (Synchronous JavaScript) [Broken: #8]
+- Floyd-Steinberg (Synchronous JavaScript)
+- Atkinson (Synchronous JavaScript)
 - Bayer-Matrix 4x4 and 8x8 (GLSL)
 ## Basic image operations
 - Box blur
