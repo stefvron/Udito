@@ -54,6 +54,20 @@
                     ]
                 }
             ]
+        },
+        {
+            "group": "Code Editor Themes",
+            "palettes": [
+                {
+                    "name": "Tokyo Night",
+                    "id": "toknt",
+                    "colours": [
+                        "F7768E","FF9E64","E0AF68","CFC9C2","9ECE6A","73DACA",
+                        "B4F9F8","2AC3DE","7DCFFF","7AA2F7","BB9AF7","C0CAF5",
+                        "A9B1D6","9AA5CE","565F89","414868","24283B","1A1B26"
+                    ]
+                }
+            ]
         }
     ],
     "colouring_algorithms": [
